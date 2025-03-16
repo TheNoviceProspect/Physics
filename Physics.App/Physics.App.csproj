@@ -9,4 +9,8 @@
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Physics.Core\Physics.Core.csproj" />
+  </ItemGroup>
+
 </Project>
