@@ -4,7 +4,11 @@ using System.Text.Json.Serialization.Metadata;
 
 namespace Physics.Core.Configuration
 {
+    [JsonSourceGenerationOptions(WriteIndented = true)]
     [JsonSerializable(typeof(AppConfig))]
+    internal partial class AppConfigContext : JsonSerializerContext
+    { }
+
     public class AppConfig
     {
         public int Width { get; set; } = 1280;
@@ -12,6 +16,7 @@ namespace Physics.Core.Configuration
         public bool Fullscreen { get; set; } = false;
 
         private static readonly string ConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appconfig.json");
+        private static readonly JsonSerializerOptions Options = new() { WriteIndented = true, TypeInfoResolver = AppConfigContext.Default };
 
         public static AppConfig Load()
         {
@@ -23,17 +28,12 @@ namespace Physics.Core.Configuration
             }
 
             var jsonString = File.ReadAllText(ConfigPath);
-            return JsonSerializer.Deserialize<AppConfig>(jsonString) ?? new AppConfig();
+            return JsonSerializer.Deserialize<AppConfig>(jsonString, Options) ?? new AppConfig();
         }
 
         public void Save()
         {
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true,
-                TypeInfoResolver = new DefaultJsonTypeInfoResolver(),
-            };
-            var jsonString = JsonSerializer.Serialize(this, options);
+            var jsonString = JsonSerializer.Serialize(this, Options);
             File.WriteAllText(ConfigPath, jsonString);
         }
     }
