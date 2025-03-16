@@ -114,6 +114,17 @@ namespace Physics.Core
             }
         }
 
+        public void ConsoleOnlyLog(string message)
+        {
+            lock (_lock)
+            {
+                var originalColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine(message);
+                Console.ForegroundColor = originalColor;
+            }
+        }
+
         // Convenience methods
         public void Debug(string message, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int lineNumber = 0)
 #if DEBUG
