@@ -40,8 +40,8 @@ namespace Physics.App
             // Create 5 circles
             for (int i = 0; i < 5; i++)
             {
-                float x = (float)(random.NextDouble() * width) - width / 2 + 100;
-                float y = (float)(random.NextDouble() * height) - height / 2 + 100;
+                float x = (float)(random.NextDouble() * width);
+                float y = (float)(random.NextDouble() * height);
 
                 BodyDef bodyDef = new BodyDef();
                 bodyDef.Position.Set(x / 64f, y / 64f); // Convert to meters
