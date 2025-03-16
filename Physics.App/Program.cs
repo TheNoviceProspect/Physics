@@ -1,14 +1,13 @@
-﻿using OpenTK.Windowing.GraphicsLibraryFramework;
-using Physics.App;
+﻿using Physics.App;
 using Physics.Core;
 using Physics.Core.Configuration;
 
-internal class Program
+public class Program
 {
 #if DEBUG
-    internal static Logger _log = new Logger("log.txt", true);
+    public static Logger _log = new Logger("log.txt", true);
 #else
-        internal static Logger _log = new Logger("log.txt", false);
+    public static Logger _log = new Logger("log.txt", false);
 #endif
 
     private static void Main(string[] args)
