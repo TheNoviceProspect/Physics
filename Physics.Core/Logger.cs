@@ -7,11 +7,14 @@ namespace Physics.Core
         private readonly string? _logFile;
         private readonly bool _useConsole;
         private static readonly object _lock = new();
+        private readonly int _maxLogFiles;
 
-        public Logger(string? logFile = null, bool useConsole = true)
+        public Logger(string? logFile = null, bool useConsole = true, int maxLogFiles = 5)
         {
             _logFile = logFile;
             _useConsole = useConsole;
+            _maxLogFiles = maxLogFiles;
+            RollLogs();
         }
 
         public enum LogLevel
@@ -21,6 +24,57 @@ namespace Physics.Core
             WARNING,
             ERROR,
             CRITICAL
+        }
+
+        private void RollLogs()
+        {
+            if (_logFile == null) return;
+
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            var baseName = Path.GetFileNameWithoutExtension(_logFile);
+            var extension = Path.GetExtension(_logFile);
+
+            // Roll existing logs
+            for (int i = _maxLogFiles - 1; i >= 1; i--)
+            {
+                var oldFile = Path.Combine(baseDir, $"{baseName}.{i}{extension}");
+                var newFile = Path.Combine(baseDir, $"{baseName}.{i + 1}{extension}");
+
+                if (File.Exists(oldFile))
+                {
+                    if (File.Exists(newFile))
+                    {
+                        File.Delete(newFile);
+                    }
+                    File.Move(oldFile, newFile);
+                }
+            }
+
+            // Handle the current log file
+            var currentLog = Path.Combine(baseDir, _logFile);
+            if (File.Exists(currentLog))
+            {
+                var firstRollover = Path.Combine(baseDir, $"{baseName}.1{extension}");
+                if (File.Exists(firstRollover))
+                {
+                    File.Delete(firstRollover);
+                }
+                File.Move(currentLog, firstRollover);
+            }
+
+            // Clean up any logs beyond the max count
+            for (int i = _maxLogFiles + 1; ; i++)
+            {
+                var oldLog = Path.Combine(baseDir, $"{baseName}.{i}{extension}");
+                if (File.Exists(oldLog))
+                {
+                    File.Delete(oldLog);
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
 
         private static ConsoleColor GetColorForLevel(LogLevel level) => level switch
@@ -62,7 +116,12 @@ namespace Physics.Core
 
         // Convenience methods
         public void Debug(string message, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int lineNumber = 0)
+#if DEBUG
             => Log(LogLevel.DEBUG, message, memberName, sourceFilePath, lineNumber);
+
+#else
+            => {};
+#endif
 
         public void Info(string message, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int lineNumber = 0)
             => Log(LogLevel.INFO, message, memberName, sourceFilePath, lineNumber);

@@ -13,8 +13,9 @@ public class Program
     private static void Main(string[] args)
     {
         _log.Info("Physics Demo v0.1 started");
+        _log.Info("Loading Config");
         var config = AppConfig.Load();
-        _log.Info($"Config loaded: {config.Width}x{config.Height} {config.Fullscreen}");
+        _log.Info($"Config loaded: [Size:{config.Width}x{config.Height}] [Fullscreen:{config.Fullscreen}] [Logs to keep: {config.LogFilesToKeep}]");
         _log.Info("Initializing App Window");
         using (App app = new App(config.Width, config.Height, "Physics Demo"))
         {

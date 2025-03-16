@@ -15,6 +15,8 @@ namespace Physics.Core.Configuration
         public int Height { get; set; } = 720;
         public bool Fullscreen { get; set; } = false;
 
+        public int LogFilesToKeep { get; set; } = 5;
+
         private static readonly string ConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appconfig.json");
         private static readonly JsonSerializerOptions Options = new() { WriteIndented = true, TypeInfoResolver = AppConfigContext.Default };
 
